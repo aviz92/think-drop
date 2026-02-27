@@ -1,0 +1,48 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "python-telegram-bot-template"
+version = "0.1.7"
+description = "A Python template for building Telegram bot."
+readme = "README.md"
+license = { text = "MIT" }
+requires-python = ">=3.12"
+dependencies = [
+    "custom-python-logger>=2.0.13",
+    "nest-asyncio>=1.6.0",
+    "pytest>=9.0.2",
+    "python-base-toolkit>=1.0.4",
+    "python-dotenv>=1.2.1",
+    "python-telegram-bot>=22.6",
+    "pytz>=2025.2",
+    "retrying>=1.4.2",
+    "twine>=6.2.0",
+]
+keywords = ["cli", "command", "telegram", "bot", "integration", "python"]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: Utilities",
+]
+
+[project.urls]
+Homepage = "https://github.com/aviz92/python-telegram-bot-template"
+Repository = "https://github.com/aviz92/python-telegram-bot-template"
+Issues = "https://github.com/aviz92/python-telegram-bot-template/issues"
+
+[tool.hatch.build.targets.wheel]
+packages = ["python_telegram_bot_template"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.ruff]
+target-version = "py312"
+line-length = 120
