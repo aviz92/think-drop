@@ -5,8 +5,7 @@
 
 ---
 
-# 🧠 Think-Drop
-
+# 💡 Think-Drop
 A personal Telegram bot that captures your text and voice notes, classifies them by category, and writes clean summaries directly to your Notion workspace — powered by AI.
 
 ---
@@ -20,6 +19,15 @@ uv sync
 
 ---
 
+## 🚀 Features
+  - **Auto-classification** — Gemini automatically classifies your note into the right category (Work, Home, Ideas, Shopping, Meetings, Reading, Decisions, Personal)
+  - **Smart summarization** — every note gets a clean title and concise summary before being saved
+  - **Notion integration** — notes are written directly to your Notion database with full metadata (category, source, date, raw text)
+  - **Generic LLM layer** — swap Gemini for Claude or OpenAI by changing a single line in `llm.py`
+  - **Voice support** — coming in phase 2
+
+---
+
 ## ⚙️ Configuration
 
 Create a `.env` file with the following variables:
@@ -30,9 +38,40 @@ NOTION_DB_ID=your_notion_database_id
 GEMINI_API_KEY=your_gemini_api_key
 ```
 
-- Get your Telegram token from [@BotFather](https://t.me/BotFather)
-- Get your Notion internal integration secret from [notion.so/my-integrations](https://www.notion.so/my-integrations)
-- Get your Gemini API key from [aistudio.google.com](https://aistudio.google.com/app/apikey)
+---
+
+## 🛠️ How to Use
+
+### 🤖 Creating a Telegram Bot
+1. Open Telegram and search for [@BotFather](https://t.me/BotFather). 
+2. Send the command /newbot. 
+3. Follow the prompts to name your bot and choose a username. 
+4. In the end, you'll get a Bot Token – save it, you'll need it in the .env file.
+
+
+### 🧠 LLM API Key
+- Get your Gemini API key from your provider (e.g., Google - Gemini, OpenAI - GPT-x, Anthropic - Claude, etc).
+- In this project we use Gemini API, you can get your API key from [aistudio.google.com](https://aistudio.google.com/app/apikey)
+
+
+### 🧩 Setting Up Notion Integration
+1. Generated Internal Integration Token
+    - Go your Notion internal integration secret at [notion.so/my-integrations](https://www.notion.so/profile/integrations/internal). 
+    - Click + New integration. 
+    - Give it a name and select the workspace. 
+    - Save the generated Internal Integration Token. 
+2. Create a new database in Notion with the following properties:
+   - Title (title)
+   - Summary (text)
+   - Raw (text)
+   - Category (select)
+   - Source (name)
+   - Date (date)
+3. Connect your integration to the database by sharing the database with your integration's email (found in the integration settings)
+4. Get your Notion database id <br>
+   - Open your **Notion database as a full page** (the URL of the page containing your database). It's the ID of the embedded database itself
+   - The ID is the section before the `?v=` in the URL - `notion.so/<Your-Database-ID>?v=<Page-ID>`
+     - Alternatively, if your database is embedded inside a page, the page URL ID and the database ID are different — use the Notion API or inspect the page to find the real database ID.
 
 ---
 
@@ -42,31 +81,6 @@ uv run main.py
 ```
 
 Then open Telegram, find your bot and send `/start`.
-
----
-
-## 🚀 Features
-
-* **Auto-classification** — Gemini automatically classifies your note into the right category (Work, Home, Ideas, Shopping, Meetings, Reading, Decisions, Personal)
-* **Smart summarization** — every note gets a clean title and concise summary before being saved
-* **Notion integration** — notes are written directly to your Notion database with full metadata (category, source, date, raw text)
-* **Generic LLM layer** — swap Gemini for Claude or OpenAI by changing a single line in `llm.py`
-* **Voice support** — coming in phase 2
-
----
-
-## 🗂 Project Structure
-```
-think-drop/
-├── main.py                 # Entry point
-├── think_drop/
-│   ├── bot.py              # Telegram bot handlers
-│   ├── llm.py              # LLM abstraction (Gemini / Claude / OpenAI)
-│   ├── notion.py           # Notion integration
-│   └── config.py           # Environment variables
-├── .env                    # Your secrets (not in git)
-└── pyproject.toml
-```
 
 ---
 
