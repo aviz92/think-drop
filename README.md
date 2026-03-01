@@ -5,26 +5,40 @@
 
 ---
 
-# 💡 Think-Drop
-A personal Telegram bot that captures your text and voice notes, classifies them by category, and writes clean summaries directly to your Notion workspace — powered by AI.
+# 💡 think-drop
+A personal Telegram bot that captures your text notes, classifies them by category, and writes clean summaries directly to your Notion workspace — powered by AI.
 
 ---
 
 ## 📦 Installation
+
+Clone and install dependencies:
 ```bash
 git clone https://github.com/aviz92/think-drop.git
 cd think-drop
 uv sync
 ```
 
+Or run with Docker Compose:
+```bash
+docker-compose up --build
+```
+
+Run in the background:
+```bash
+docker-compose up --build -d
+docker-compose down
+```
+
 ---
 
 ## 🚀 Features
-  - **Auto-classification** — Gemini automatically classifies your note into the right category (Work, Home, Ideas, Shopping, Meetings, Reading, Decisions, Personal)
-  - **Smart summarization** — every note gets a clean title and concise summary before being saved
-  - **Notion integration** — notes are written directly to your Notion database with full metadata (category, source, date, raw text)
-  - **Generic LLM layer** — swap Gemini for Claude or OpenAI by changing a single line in `llm.py`
-  - **Voice support** — coming in phase 2
+  - ✅ **Auto-classification** — AI classifies each note into a category (Work, Home, Ideas, Shopping, Meetings, Reading, Decisions, Personal)
+  - ✅ **Smart summarization** — every note gets a concise title and summary before being saved
+  - ✅ **Notion integration** — notes are written directly to your Notion database with full metadata (title, summary, raw text, category, source, date)
+  - ✅ **Multi-LLM support** — switch between Gemini, OpenAI, or Claude by changing a single env var (`LLM_PROVIDER`)
+  - ✅ **Session-scoped logging** — every message processing pipeline is tracked with a unique session ID for easy debugging and tracing
+  - ✅ **Async processing** — LLM and Notion calls run off the event loop, keeping the bot responsive under load
 
 ---
 
@@ -33,63 +47,93 @@ uv sync
 Create a `.env` file with the following variables:
 ```env
 TELEGRAM_BOT_TOKEN=your_telegram_bot_token
+
 NOTION_TOKEN=your_notion_internal_integration_secret
 NOTION_DB_ID=your_notion_database_id
+
+LLM_PROVIDER=gemini          # options: gemini | openai | claude
 GEMINI_API_KEY=your_gemini_api_key
+OPENAI_API_KEY=your_openai_api_key
+ANTHROPIC_API_KEY=your_anthropic_api_key
 ```
+
+Only the API key matching your chosen `LLM_PROVIDER` is required.
 
 ---
 
 ## 🛠️ How to Use
 
 ### 🤖 Creating a Telegram Bot
-1. Open Telegram and search for [@BotFather](https://t.me/BotFather). 
-2. Send the command /newbot. 
-3. Follow the prompts to name your bot and choose a username. 
-4. In the end, you'll get a Bot Token – save it, you'll need it in the .env file.
-
+1. Open Telegram and search for [@BotFather](https://t.me/BotFather).
+2. Send the command `/newbot`.
+3. Follow the prompts to name your bot and choose a username.
+4. Copy the Bot Token and add it to your `.env` as `TELEGRAM_BOT_TOKEN`.
 
 ### 🧠 LLM API Key
-- Get your Gemini API key from your provider (e.g., Google - Gemini, OpenAI - GPT-x, Anthropic - Claude, etc).
-- In this project we use Gemini API, you can get your API key from [aistudio.google.com](https://aistudio.google.com/app/apikey)
+Choose one provider and set the matching env var:
 
+| Provider | `LLM_PROVIDER` value | Env var | Where to get it |
+|----------|----------------------|---------|-----------------|
+| Google Gemini | `gemini` | `GEMINI_API_KEY` | [aistudio.google.com](https://aistudio.google.com/app/apikey) |
+| OpenAI | `openai` | `OPENAI_API_KEY` | [platform.openai.com](https://platform.openai.com/api-keys) |
+| Anthropic Claude | `claude` | `ANTHROPIC_API_KEY` | [console.anthropic.com](https://console.anthropic.com/) |
 
 ### 🧩 Setting Up Notion Integration
-1. Generated Internal Integration Token
-    - Go your Notion internal integration secret at [notion.so/my-integrations](https://www.notion.so/profile/integrations/internal). 
-    - Click + New integration. 
-    - Give it a name and select the workspace. 
-    - Save the generated Internal Integration Token. 
-2. Create a new database in Notion with the following properties:
-   - Title (title)
-   - Summary (text)
-   - Raw (text)
-   - Category (select)
-   - Source (name)
-   - Date (date)
-3. Connect your integration to the database by sharing the database with your integration's email (found in the integration settings)
-4. Get your Notion database id <br>
-   - Open your **Notion database as a full page** (the URL of the page containing your database). It's the ID of the embedded database itself
-   - The ID is the section before the `?v=` in the URL - `notion.so/<Your-Database-ID>?v=<Page-ID>`
-     - Alternatively, if your database is embedded inside a page, the page URL ID and the database ID are different — use the Notion API or inspect the page to find the real database ID.
+1. **Create an integration token**
+   - Go to [notion.so/my-integrations](https://www.notion.so/profile/integrations/internal) → click **+ New integration**.
+   - Give it a name, select your workspace, and save the generated **Internal Integration Token** as `NOTION_TOKEN`.
+
+2. **Create a Notion database** with the following properties:
+
+   | Property | Type |
+   |----------|------|
+   | Title | title |
+   | Summary | text |
+   | Raw | text |
+   | Category | select |
+   | Source | select |
+   | Date | date |
+
+3. **Connect the integration** — open the database in Notion, click ··· → **Connections** and add your integration.
+
+4. **Get the database ID** — open the database as a full page. The ID is the segment before `?v=` in the URL:
+   `notion.so/<DATABASE-ID>?v=...`
 
 ---
 
 ## 🚀 Quick Start
+
 ```bash
-uv run main.py
+uv run python think_drop/main.py
 ```
 
 Then open Telegram, find your bot and send `/start`.
 
 ---
 
+## 📋 Log Tracing
+
+Every message is assigned a unique 8-character session ID. All log lines for that message share the same ID, making it easy to trace a full request through the pipeline:
+
+```
+INFO  [a3f2c1b8] Message received | user_id=123456 username=avi | chars=47
+INFO  [a3f2c1b8] LLM classification started | provider=gemini
+DEBUG [a3f2c1b8] LLM response received | response_chars=112
+INFO  [a3f2c1b8] LLM classification done | title='Buy milk' category=Shopping
+INFO  [a3f2c1b8] Notion write started | title='Buy milk' category=Shopping
+INFO  [a3f2c1b8] Note saved to Notion | url=https://notion.so/abc123...
+INFO  [a3f2c1b8] Confirmation sent to user
+```
+
+---
+
 ## 🤝 Contributing
 
 If you have a helpful pattern or improvement to suggest:
-Fork the repo
-Create a new branch
-Submit a pull request
+1. Fork the repo
+2. Create a new branch
+3. Submit a pull request
+
 I welcome additions that promote clean, productive, and maintainable development.
 
 ---

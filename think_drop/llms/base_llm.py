@@ -1,4 +1,5 @@
 """Generic LLM abstraction layer — swap providers by changing LLM_PROVIDER."""
+
 from abc import ABC, abstractmethod
 
 

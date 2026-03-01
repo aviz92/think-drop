@@ -1,0 +1,17 @@
+services:
+  telegram-notion-bot:
+    build: .
+    container_name: telegram_notion_bot
+    env_file:
+      - .env  # Load environment variables from .env file
+    restart: unless-stopped  # Auto-restart on a crash, but not on manual stop
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"  # Limit each log file to 10 megabytes
+        max-file: "3"  # Keep a maximum of 3 rotated log files
+
+    # Example of mapping a folder (volume) on the host (./logs) to a folder inside the container (/app/logs).
+    # Useful for persisting logs, configs, or runtime data outside the container.
+    # volumes:
+    #   - ./logs:/app/logs

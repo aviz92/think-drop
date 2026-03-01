@@ -12,18 +12,17 @@ requires-python = ">=3.12"
 dependencies = [
     "anthropic>=0.84.0",
     "custom-python-logger>=2.0.13",
-    "google-generativeai>=0.8.6",
-    "nest-asyncio>=1.6.0",
+    "google-genai>=1.65.0",
     "notion-client>=3.0.0",
     "openai>=2.24.0",
+    "pydantic-settings>=2.13.1",
     "pytest>=9.0.2",
+    "pytest-plugins>=2.0.2",
     "python-base-toolkit>=1.0.4",
-    "python-dotenv>=1.2.1",
     "python-notion-plus>=1.0.0",
     "python-telegram-bot>=22.6",
     "pytz>=2025.2",
-    "retrying>=1.4.2",
-    "twine>=6.2.0",
+    "tenacity>=9.1.4",
 ]
 keywords = ["cli", "command", "telegram", "bot", "integration", "python"]
 classifiers = [
