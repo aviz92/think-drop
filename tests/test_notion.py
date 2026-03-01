@@ -2,15 +2,14 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
+from think_drop import notion
 from think_drop.notion import write_note
 
 
 @pytest.fixture(autouse=True)
 def reset_notion_client_cache() -> None:
     """Ensure _get_client() is not cached across tests."""
-    from think_drop import notion
-
-    notion._get_client.cache_clear()
+    notion._get_client.cache_clear()  # pylint: disable=protected-access
 
 
 class TestWriteNote:
